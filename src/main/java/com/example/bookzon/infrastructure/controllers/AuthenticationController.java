@@ -9,6 +9,7 @@ import com.example.bookzon.domain.exceptions.InvalidUserDataException;
 import com.example.bookzon.domain.exceptions.UserAlreadyExistsException;
 import com.example.bookzon.infrastructure.dtos.*;
 
+;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -33,7 +34,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-
 public class AuthenticationController {
 
 
