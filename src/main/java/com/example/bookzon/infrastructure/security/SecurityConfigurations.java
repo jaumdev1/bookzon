@@ -31,10 +31,10 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
 
 
-                        .requestMatchers(HttpMethod.POST, "/auth/login/cookie").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login/cookie").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/book/hello").hasAnyRole("USER", "ADMIN")
                         
                         .anyRequest().authenticated()
