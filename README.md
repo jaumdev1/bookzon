@@ -4,5 +4,5 @@ O projeto Bookzon é uma plataforma dedicada à discussão e exploração de liv
 
 # OBS
 
-Existem alguns acoplamentos nesse projeto referente ao Framework, eu tenho conhecimento que isso não é uma boa pratica para softwares que mudam frequentemente, e no futuro irei migrar os acoplamentos para camada de infra, e criando portas e adaptadores para tal.
+Existem alguns acoplamentos nesse projeto referente ao Framework, eu tenho conhecimento que isso não é uma boa pratica para softwares que mudam frequentemente, e no futuro irei migrar os acoplamentos para camada de infra, e criando portas e adaptadores ( Arquitetura Hexagonal) para tal.
 
