@@ -61,7 +61,6 @@ public class GoogleBooksService {
                     String coverImage = volume.getVolumeInfo().getImageLinks() != null ?
                             volume.getVolumeInfo().getImageLinks().getThumbnail() : null;
 
-                    // Create a BookDTO object with the extracted information
                     return new BookDTO(id, title, author, publishedDate, description, genre, coverImage);
                 })
                 .collect(Collectors.toList());
