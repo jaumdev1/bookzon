@@ -7,5 +7,5 @@ public interface AuthenticationGateway {
 
      LoginResponseDTO Login(String username, String password);
 
-    RefreshResponseDTO Refresh(String refreshToken);
+     RefreshResponseDTO Refresh(String refreshToken);
 }

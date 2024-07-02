@@ -1,19 +1,27 @@
 package com.example.bookzon.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import java.util.UUID;
 
-@Data
+
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Getter
+@Data
 @Table(name = "books")
 public class Book {
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
+
+    private String googleId;
 
     private String title;
     private String author;

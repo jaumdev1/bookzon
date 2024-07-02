@@ -4,6 +4,6 @@ import com.example.bookzon.domain.entities.User;
 
 
 public interface UserGateway {
-   public User createUser(User user);
-   public User findByUsername(String username);
+    User createUser(User user);
+    User findByUsername(String username);
 }

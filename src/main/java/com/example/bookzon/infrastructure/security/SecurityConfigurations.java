@@ -47,7 +47,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/api/book/hello").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/book/search").hasAnyRole("USER", "ADMIN")
 
                       .anyRequest().authenticated()
                 ).sessionManagement(sessionManagement ->
