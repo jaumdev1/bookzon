@@ -6,3 +6,7 @@ O projeto Bookzon é uma plataforma dedicada à discussão e exploração de liv
 
 Existe um acoplamento nesse projeto referente ao Framework do JPA na minha camada de domínio, eu tenho conhecimento que isso não é uma boa pratica para softwares que mudam frequentemente, e no futuro irei migrar os acoplamentos para camada de infra, e criando portas e adaptadores ( Arquitetura Hexagonal) para tal.
 
+
+# Integração Google
+
+A integração com google deve ser feita com baixo acoplamento, para que quando eu precisar trocar o serviço de consumo de livro seja baixo o aclopamento.

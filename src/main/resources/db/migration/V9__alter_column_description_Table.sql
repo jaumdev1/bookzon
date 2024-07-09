@@ -1,0 +1,3 @@
+ALTER TABLE books
+ALTER COLUMN description TYPE VARCHAR(3000);
+

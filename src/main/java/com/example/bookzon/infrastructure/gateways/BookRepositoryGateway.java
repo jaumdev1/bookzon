@@ -3,6 +3,7 @@
 import com.example.bookzon.application.gateways.BookGateway;
 import com.example.bookzon.domain.entities.Book;
 import com.example.bookzon.infrastructure.repositories.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,15 +34,17 @@ public class BookRepositoryGateway implements BookGateway {
     }
 
     @Override
-    public Book updateBook(Book book) {
-
-        Optional<Book> existingBookOptional = bookRepository.findById(book.getId());
-        if (existingBookOptional.isPresent()) {
-            return bookRepository.save(book);
-        } else {
-            throw new RuntimeException("Book with ID " + book.getId() + " not found for update");
-        }
+    public Optional<Book> getBookByGoogleId(String googleId) {
+        return bookRepository.findByGoogleId(googleId);
     }
+
+    @Override
+    public Book updateBook(Book book) {
+        bookRepository.findById(book.getId()).orElseThrow(() ->
+        new RuntimeException("Book with ID " + book.getId() + " not found for update"));
+        return bookRepository.save(book);
+    };
+
 
     @Override
     public void deleteBook(UUID id) {

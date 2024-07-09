@@ -12,13 +12,24 @@ import java.util.UUID;
 @Entity
 @Table(name = "discussion_topics")
 public class DiscussionTopic {
+    public  DiscussionTopic( String title, String description, Book book, User user, List<Comment> collect) {
+        this.title = title;
+        this.description = description;
+        this.book = book;
+        this.user = user;
+        this.comments = collect;
+    }
+    public DiscussionTopic(String title, String description,  Book book, User user){
+        this.title = title;
+        this.description = description;
+        this.book = book;
+        this.user = user;
+    }
     @Id
     @GeneratedValue(generator = "UUID")
-
     private UUID id;
-
     private String title;
-
+    private String description;
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
@@ -29,4 +40,5 @@ public class DiscussionTopic {
 
     @OneToMany(mappedBy = "discussionTopic", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
+
 }

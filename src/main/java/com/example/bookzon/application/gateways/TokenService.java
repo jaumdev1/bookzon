@@ -1,9 +1,14 @@
 package com.example.bookzon.application.gateways;
 
-public interface TokenService {
-    String generateToken(String username);
+import java.util.UUID;
 
-    String generateRefreshToken(String username);
+public interface TokenService {
+    String generateToken(UUID userId,String username);
+
+    String generateRefreshToken(UUID userId,String username);
     String validateToken(String token);
     String getUsernameFromToken(String token);
+
+    UUID getUserIdFromToken(String token);
+
 }

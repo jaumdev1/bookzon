@@ -1,0 +1,2 @@
+ALTER TABLE books
+ALTER COLUMN cover_image TYPE VARCHAR(1000);

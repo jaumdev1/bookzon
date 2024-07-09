@@ -14,7 +14,7 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/book")
-
+@Tag(name = "Book", description = "*")
 public class BookController {
 
     private final SearchBookByTitleUseCase
@@ -25,10 +25,9 @@ public class BookController {
     }
 
 
-    @Tag(name = "get", description = "GET methods of hello APIs")
+
     @GetMapping("/hello")
     public ResponseEntity getHelloWorld() {
-
         return ResponseEntity.ok("HELLO WORLD!");
     }
     @GetMapping("/search")

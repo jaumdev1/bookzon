@@ -1,10 +1,12 @@
 package com.example.bookzon.infrastructure.security;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.bookzon.application.gateways.TokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 
 @Service
@@ -24,12 +27,13 @@ public class TokenServiceImpl implements TokenService {
     @Value("${api.security.token.expiration}")
     private Long accessTokenExpiration;
 
-    public String generateToken(String username){
+    public String generateToken(UUID userId,String username){
         try{
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(username)
+                    .withClaim("userId", userId.toString())
                     .withExpiresAt(genExpirationDate(accessTokenExpiration))
                     .sign(algorithm);
             return token;
@@ -50,12 +54,13 @@ public class TokenServiceImpl implements TokenService {
             return "";
         }
     }
-    public String generateRefreshToken(String username) {
+    public String generateRefreshToken(UUID userId,String username) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String refreshToken = JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(username)
+                    .withClaim("userId", userId.toString())
                     .withExpiresAt(genExpirationDate(refreshTokenExpiration))
                     .sign(algorithm);
             return refreshToken;
@@ -69,6 +74,23 @@ public class TokenServiceImpl implements TokenService {
             return JWT.decode(token).getSubject();
         } catch (JWTDecodeException exception) {
             throw new RuntimeException("Error decoding token and extracting username", exception);
+        }
+    }
+    public UUID getUserIdFromToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer("auth-api")
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+
+            String userIdStr = jwt.getClaim("userId").asString();
+
+            UUID userId = UUID.fromString(userIdStr);
+            return userId;
+        } catch (JWTVerificationException e) {
+            throw new RuntimeException("Invalid token or token expired", e);
         }
     }
     private Instant genExpirationDate(long expirationSeconds){

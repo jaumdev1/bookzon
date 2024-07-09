@@ -1,5 +1,6 @@
 package com.example.bookzon.infrastructure.googleapi;
 
+import com.example.bookzon.domain.entities.Book;
 import com.example.bookzon.infrastructure.dtos.Book.BookDTO;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -10,6 +11,7 @@ import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.books.v1.Books;
 import com.google.api.services.books.v1.BooksRequestInitializer;
+import com.google.api.services.books.v1.model.Volume;
 import com.google.api.services.books.v1.model.Volumes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class GoogleBooksService {
     }
 
     private Books initializeBooksService(JsonFactory jsonFactory, String apiKey) throws GeneralSecurityException, IOException {
+
         return new Books.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 jsonFactory,
@@ -66,5 +69,22 @@ public class GoogleBooksService {
                 .collect(Collectors.toList());
 
         return bookDTOS;
+    }
+    public Book findBookById(String bookId) throws IOException {
+        Volume volume = booksService.volumes().get(bookId).execute();
+
+        String id = volume.getId();
+        String title = volume.getVolumeInfo().getTitle();
+        List<String> authors = volume.getVolumeInfo().getAuthors();
+        String author = authors != null ? authors.get(0) : null;
+        Integer publishedDate = volume.getVolumeInfo().getPublishedDate() != null ?
+                Integer.parseInt(volume.getVolumeInfo().getPublishedDate().substring(0, 4)) : null;
+        String description = volume.getVolumeInfo().getDescription();
+        List<String> categories = volume.getVolumeInfo().getCategories();
+        String genre = categories != null ? categories.get(0) : null;
+        String coverImage = volume.getVolumeInfo().getImageLinks() != null ?
+                volume.getVolumeInfo().getImageLinks().getThumbnail() : null;
+
+        return new BookDTO(id, title, author, publishedDate, description, genre, coverImage).toEntity();
     }
 }

@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-   @ExceptionHandler(UserAlreadyExistsException.class)
+    @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<String> handleUserAlreadyExists(UserAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
-   @ExceptionHandler(InvalidUserDataException.class)
+    @ExceptionHandler(InvalidUserDataException.class)
     public ResponseEntity<String> handleInvalidUserData(InvalidUserDataException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }

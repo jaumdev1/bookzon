@@ -46,14 +46,11 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-
                         .requestMatchers(HttpMethod.GET, "/api/book/search").hasAnyRole("USER", "ADMIN")
-
                       .anyRequest().authenticated()
                 ).sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+                );
        return httpSecurity.build();
     }
 

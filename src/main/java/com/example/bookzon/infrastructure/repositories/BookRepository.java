@@ -4,8 +4,11 @@ import com.example.bookzon.domain.entities.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface BookRepository  extends JpaRepository<Book, UUID> {
     List<Book> findByTitleContainingIgnoreCase(String title);
+
+    Optional<Book> findByGoogleId(String googleId);
 }

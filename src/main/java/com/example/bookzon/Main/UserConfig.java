@@ -2,6 +2,7 @@ package com.example.bookzon.Main;
 
 import com.example.bookzon.application.gateways.AuthenticationGateway;
 import com.example.bookzon.application.gateways.UserGateway;
+import com.example.bookzon.application.usecases.authentication.AuthenticateUserUseCase;
 import com.example.bookzon.application.usecases.authentication.LoginUseCase;
 import com.example.bookzon.application.usecases.authentication.RefreshUseCase;
 import com.example.bookzon.application.usecases.authentication.RegisterUseCase;
@@ -36,6 +37,10 @@ public class UserConfig {
     @Bean
     public LoginUseCase loginUseCase(AuthenticationGateway authenticationGateway) {
         return new LoginUseCase(authenticationGateway);
+    }
+    @Bean
+    public AuthenticateUserUseCase authenticateUserUseCase(AuthenticationGateway authenticationGateway) {
+        return new AuthenticateUserUseCase(authenticationGateway);
     }
     @Bean
     public RefreshUseCase refreshUseCase(AuthenticationGateway authenticationGateway) {
