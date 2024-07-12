@@ -1,15 +1,17 @@
 package com.example.bookzon.domain.entities;
 
+import com.example.bookzon.domain.enums.AuthProvider;
 import com.example.bookzon.domain.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Table(name = "users")
 @Entity(name = "users")
@@ -18,13 +20,31 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class User implements UserDetails {
+public class User implements UserDetails, OAuth2User {
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
     private String username;
     private String password;
     private UserRole role;
+    private String name;
+    private String imageUrl;
+
+    @Column(nullable = false)
+    private Boolean emailVerified = false;
+
+    private String email;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
+
+    private String providerId;
+
+    @Transient
+    private Collection<? extends GrantedAuthority> authorities;
+    @Transient
+    private Map<String, Object> attributes;
 
     public User(String username, String password, UserRole role){
         this.username = username;
@@ -37,6 +57,25 @@ public class User implements UserDetails {
     }
     public User(UUID id){
         this.id = id;
+    }
+
+    public User(String username, String name, String email, String password, UserRole userRole) {
+        this.username = username;
+        this.name = name;
+        this.email  = email;
+        this.password = password;
+        this.role = userRole;
+    }
+
+
+    @Override
+
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
     }
 
     @Override
@@ -76,6 +115,10 @@ public class User implements UserDetails {
 
     public void setPassword(String password){
         this.password = password;
+    }
+    @Override
+    public String getName() {
+        return null;
     }
 
 }

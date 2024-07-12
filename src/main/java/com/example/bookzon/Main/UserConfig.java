@@ -2,10 +2,8 @@ package com.example.bookzon.Main;
 
 import com.example.bookzon.application.gateways.AuthenticationGateway;
 import com.example.bookzon.application.gateways.UserGateway;
-import com.example.bookzon.application.usecases.authentication.AuthenticateUserUseCase;
-import com.example.bookzon.application.usecases.authentication.LoginUseCase;
-import com.example.bookzon.application.usecases.authentication.RefreshUseCase;
-import com.example.bookzon.application.usecases.authentication.RegisterUseCase;
+import com.example.bookzon.application.usecases.authentication.*;
+import com.example.bookzon.application.usecases.user.GetUserUseCase;
 import com.example.bookzon.infrastructure.gateways.UserRepositoryGateway;
 import com.example.bookzon.infrastructure.repositories.UserRepository;
 import com.example.bookzon.infrastructure.security.AuthenticationService;
@@ -17,16 +15,26 @@ import org.springframework.security.authentication.AuthenticationManager;
 public class UserConfig {
 
 
-
-    @Bean
-    public RegisterUseCase registerUseCase(UserGateway userGateway) {
-        return new RegisterUseCase(userGateway);
-    }
-
     @Bean
     public UserGateway userGateway(UserRepository userRepository) {
         return new UserRepositoryGateway(userRepository);
     }
+
+
+    @Bean
+    public GetUserUseCase getUserUseCase(UserGateway userGateway) {
+        return new GetUserUseCase(userGateway);
+    }
+    @Bean
+    public RegisterUseCase registerUseCase(UserGateway userGateway) {
+        return new RegisterUseCase(userGateway);
+    }
+    @Bean
+    public LoginGoogleUseCase loginGoogleUseCase(UserGateway userGateway) {
+        return new LoginGoogleUseCase(userGateway);
+    }
+
+
 
      @Bean
     AuthenticationGateway authenticationGateway(){

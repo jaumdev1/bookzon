@@ -1,9 +1,7 @@
 package com.example.bookzon.infrastructure.controllers;
 
-import com.example.bookzon.application.usecases.authentication.AuthenticateUserUseCase;
-import com.example.bookzon.application.usecases.authentication.LoginUseCase;
-import com.example.bookzon.application.usecases.authentication.RefreshUseCase;
-import com.example.bookzon.application.usecases.authentication.RegisterUseCase;
+import com.example.bookzon.application.usecases.authentication.*;
+import com.example.bookzon.application.usecases.user.GetUserUseCase;
 import com.example.bookzon.domain.entities.User;
 import com.example.bookzon.domain.enums.UserRole;
 import com.example.bookzon.domain.exceptions.InvalidUserDataException;
@@ -11,6 +9,7 @@ import com.example.bookzon.domain.exceptions.UserAlreadyExistsException;
 import com.example.bookzon.infrastructure.dtos.*;
 
 ;
+import com.example.bookzon.infrastructure.dtos.User.UserDTO;
 import com.example.bookzon.infrastructure.security.UserIdStrategy.Factory.UserIdStrategyFactory;
 import com.example.bookzon.infrastructure.security.UserIdStrategy.UserIdStrategy;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +24,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +45,10 @@ public class AuthenticationController {
 
     private final AuthenticateUserUseCase authenticateUserUseCase;
     private final RegisterUseCase registerUseCase;
+
+    private final LoginGoogleUseCase loginGoogleUseCase;
+
+    private final GetUserUseCase getUserUseCase;
     @Autowired
     private UserIdStrategyFactory userIdStrategyFactory;
 
@@ -51,14 +56,20 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+
     @Autowired
     public AuthenticationController(
             AuthenticateUserUseCase authenticateUserUseCase,
             RegisterUseCase registerUseCase,
-            RefreshUseCase refreshUseCase) {
+            RefreshUseCase refreshUseCase, LoginGoogleUseCase loginGoogleUseCase,
+            GetUserUseCase getUserUseCase
 
+    ) {
+
+        this.loginGoogleUseCase = loginGoogleUseCase;
         this.authenticateUserUseCase = authenticateUserUseCase;
         this.registerUseCase = registerUseCase;
+        this.getUserUseCase = getUserUseCase;
     }
 
     @PostMapping("/login")
@@ -90,9 +101,8 @@ public class AuthenticationController {
             }
             return ResponseEntity.badRequest().body(errors);
         }
-
         try {
-            User user = registerUseCase.execute(new User(data.username(), data.password(), UserRole.USER));
+            User user = registerUseCase.execute(new User(data.username(), data.name(), data.email(), data.password(), UserRole.USER));
             return ResponseEntity.ok().build();
         } catch (UserAlreadyExistsException | InvalidUserDataException ex) {
             throw ex;
@@ -102,7 +112,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<String> getCurrentUserId(HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<?> getCurrentUser(HttpSession session, HttpServletRequest request) throws Exception {
         UUID userId = null;
         userId = userIdStrategyFactory.getStrategy(request).getCurrentUserId();
         if (userId == null)
@@ -110,8 +120,39 @@ public class AuthenticationController {
         if(userId == null)
            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
 
-        return ResponseEntity.ok("User ID: " + userId);
-
+        User user = getUserUseCase.execute(userId);
+        var userDto = new UserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getName(),
+                user.getImageUrl()
+        );
+        return ResponseEntity.ok(userDto);
     }
 
+
+    @GetMapping("/googleuser")
+    public Map<String, Object> userEndpoint(@AuthenticationPrincipal OidcUser principal) {
+        Map<String, Object> response = new HashMap<>();
+
+        if (principal != null) {
+            String googleId = principal.getSubject();
+            String name = principal.getAttribute("name");
+            String email = principal.getAttribute("email");
+
+            User user = loginGoogleUseCase.execute(googleId, name, email);
+
+            response.put("id", user.getId());
+
+        } else {
+            response.put("message", "User not authenticated");
+        }
+
+        return response;
+    }
+
+    @GetMapping("/loginGoogle")
+    public String login() {
+        return "redirect:/oauth2/authorization/google";
+    }
 }
